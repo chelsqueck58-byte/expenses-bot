@@ -1,0 +1,24 @@
+name: Daily Expense Summary
+
+on:
+  schedule:
+    - cron: '0 15 * * *'  # 11pm HKT (UTC+8)
+    - cron: '0 15 * * 0'  # 11pm HKT Sunday (weekly)
+  workflow_dispatch:
+
+jobs:
+  send_summary:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - run: pip install requests
+      - run: python scripts/daily_summary.py
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DB_ID: ${{ secrets.NOTION_DB_ID }}
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
