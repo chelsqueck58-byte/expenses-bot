@@ -87,4 +87,26 @@ def format_message(expenses):
         emoji = cat_emojis.get(cat, "📦")
         lines.append(f"\n{emoji} *{cat}*  {cat_currency} {cat_total:,.2f}")
         for e in items:
-            lines.append(f"   {e['merchant']}  {e['am
+            lines.append(f"   {e['merchant']}  {e['amount']:,.2f}")
+        total_hkd += cat_total
+
+    total_sgd = sum(e["amount_sgd"] or 0 for e in expenses)
+    lines.append("\n─────────────────")
+    lines.append(f"💰 *Total  HKD {total_hkd:,.2f}*")
+    if total_sgd:
+        lines.append(f"≈ SGD {total_sgd:,.2f}")
+
+    return "\n".join(lines)
+
+def send_telegram(msg):
+    url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
+    requests.post(url, json={
+        "chat_id": TELEGRAM_CHAT_ID,
+        "text": msg,
+        "parse_mode": "Markdown"
+    })
+
+expenses = get_today_expenses()
+parsed = parse_expenses(expenses)
+msg = format_message(parsed)
+send_telegram(msg)
