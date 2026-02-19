@@ -15,7 +15,7 @@ jobs:
         with:
           python-version: '3.11'
       - run: pip install requests
-      - run: python .github/workflows/scripts/daily_summary.py
+      - run: python scripts/daily_summary.py
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
